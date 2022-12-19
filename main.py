@@ -18,6 +18,7 @@ def create_grid(height: int, width: int) -> list:
 # Prototyping functions - rotating grid
 def rotate_grid(angle_in_rads: float) -> None:
     pass
+
 # Prototyping functions - tilting camera
 def tilt_camera(angle_in_rads: float) -> None:
     pass
@@ -30,14 +31,24 @@ class Engine():
         self.screen = pygame.display.set_mode((res_height, res_width))
         self.game_loop = True
 
+        # Prototyping variables
+        self.camera = (0, 0)
+        self.grid = []
+
     def run(self):
         self.main_game_loop()
+
+    def render_grid(self):
+        pass
 
     def main_game_loop(self):
         while self.game_loop:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.game_loop = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
+                        self.game_loop = False
             # Render frame here
             self.screen.fill(BLACK)
 
