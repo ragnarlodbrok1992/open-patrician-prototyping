@@ -12,12 +12,19 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # Creating test grid
+def create_grid(height: int, width: int) -> list:
+    pass
+
 # Prototyping functions - rotating grid
+def rotate_grid(angle_in_rads: float) -> None:
+    pass
 # Prototyping functions - tilting camera
+def tilt_camera(angle_in_rads: float) -> None:
+    pass
 
 class Engine():
 
-    def __init__(self, res_height, res_width):
+    def __init__(self, res_height: int , res_width: int) -> None:
         pygame.init()
         pygame.display.set_caption("Open Patrician Prototyping engine")
         self.screen = pygame.display.set_mode((res_height, res_width))
