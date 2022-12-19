@@ -11,6 +11,10 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+# Creating test grid
+# Prototyping functions - rotating grid
+# Prototyping functions - tilting camera
+
 class Engine():
 
     def __init__(self, res_height, res_width):
