@@ -30,7 +30,7 @@ class Tile:
         self.ne = (pos_x, pos_y + size)
         self.sw = (pos_x + size, pos_y)
         self.se = (pos_x + size, pos_y + size)
-        self.rect = pygame.Rect(self.nw, (size, size))
+        # self.rect = pygame.Rect(self.nw, (size, size))
 
         # DEBUG
         # print(self.nw)
@@ -82,9 +82,10 @@ class Engine():
             # Change rects positions
             tile.rect.move_ip(self.camera[0], self.camera[1])
             if index % 2 == 0:
-                pygame.draw.rect(self.screen, GREEN, tile.rect)
+                # pygame.draw.rect(self.screen, GREEN, tile.rect)
+                pygame.draw.rect(self.screen, GREEN, 
             else:
-                pygame.draw.rect(self.screen, RED, tile.rect)
+                # pygame.draw.rect(self.screen, RED, tile.rect)
         # Zero the camera
         self.camera = [0, 0]
 
