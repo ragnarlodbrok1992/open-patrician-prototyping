@@ -26,10 +26,10 @@ WHITE = (255, 255, 255)
 # Tile class
 class Tile:
     def __init__(self, pos_x, pos_y, size=TILE_SIZE):
-        self.nw = (pos_x, pos_y)
-        self.ne = (pos_x, pos_y + size)
-        self.sw = (pos_x + size, pos_y)
-        self.se = (pos_x + size, pos_y + size)
+        self.nw = [pos_x, pos_y]
+        self.ne = [pos_x, pos_y + size]
+        self.sw = [pos_x + size, pos_y]
+        self.se = [pos_x + size, pos_y + size]
         # self.rect = pygame.Rect(self.nw, (size, size))
 
         # DEBUG
@@ -80,12 +80,23 @@ class Engine():
         # Render grid
         for index, tile in enumerate(self.grid):
             # Change rects positions
-            tile.rect.move_ip(self.camera[0], self.camera[1])
+            # tile.rect.move_ip(self.camera[0], self.camera[1])
+
+            tile.nw[0] += self.camera[0]
+            tile.ne[0] += self.camera[0]
+            tile.sw[0] += self.camera[0]
+            tile.se[0] += self.camera[0]
+
+            tile.nw[1] += self.camera[1]
+            tile.ne[1] += self.camera[1]
+            tile.sw[1] += self.camera[1]
+            tile.se[1] += self.camera[1]
             if index % 2 == 0:
                 # pygame.draw.rect(self.screen, GREEN, tile.rect)
-                pygame.draw.rect(self.screen, GREEN, 
+                pygame.draw.lines(self.screen, GREEN, True, [tile.nw, tile.ne, tile.se, tile.sw]) 
             else:
                 # pygame.draw.rect(self.screen, RED, tile.rect)
+                pygame.draw.lines(self.screen, RED, True, [tile.nw, tile.ne, tile.se, tile.sw]) 
         # Zero the camera
         self.camera = [0, 0]
 
