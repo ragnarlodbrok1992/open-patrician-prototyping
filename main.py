@@ -24,13 +24,28 @@ WHITE = (255, 255, 255)
 # -
 # v
 
+# Point class
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def get_pair(self):
+        return (self.x, self.y)
+
 # Tile class
 class Tile:
     def __init__(self, pos_x, pos_y, size=TILE_SIZE):
-        self.nw = [pos_x, pos_y]
-        self.ne = [pos_x, pos_y + size]
-        self.sw = [pos_x + size, pos_y]
-        self.se = [pos_x + size, pos_y + size]
+        self.nw = Point(pos_x, pos_y)
+        self.ne = Point(pos_x, pos_y + size)
+        self.sw = Point(pos_x + size, pos_y)
+        self.se = Point(pos_x + size, pos_y + size)
+
+        # DEBUG
+        # self.nw = [pos_x, pos_y]
+        # self.ne = [pos_x, pos_y + size]
+        # self.sw = [pos_x + size, pos_y]
+        # self.se = [pos_x + size, pos_y + size]
         # self.rect = pygame.Rect(self.nw, (size, size))
 
         # DEBUG
@@ -85,21 +100,21 @@ class Engine():
             # Change rects positions
             # tile.rect.move_ip(self.camera[0], self.camera[1])
 
-            tile.nw[0] += self.camera[0]
-            tile.ne[0] += self.camera[0]
-            tile.sw[0] += self.camera[0]
-            tile.se[0] += self.camera[0]
+            tile.nw.x += self.camera[0]
+            tile.ne.x += self.camera[0]
+            tile.sw.x += self.camera[0]
+            tile.se.x += self.camera[0]
 
-            tile.nw[1] += self.camera[1]
-            tile.ne[1] += self.camera[1]
-            tile.sw[1] += self.camera[1]
-            tile.se[1] += self.camera[1]
+            tile.nw.y += self.camera[1]
+            tile.ne.y += self.camera[1]
+            tile.sw.y += self.camera[1]
+            tile.se.y += self.camera[1]
             if index % 2 == 0:
                 # pygame.draw.rect(self.screen, GREEN, tile.rect)
-                pygame.draw.lines(self.screen, GREEN, True, [tile.nw, tile.ne, tile.se, tile.sw]) 
+                pygame.draw.lines(self.screen, GREEN, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
             else:
                 # pygame.draw.rect(self.screen, RED, tile.rect)
-                pygame.draw.lines(self.screen, RED, True, [tile.nw, tile.ne, tile.se, tile.sw]) 
+                pygame.draw.lines(self.screen, RED, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
         # Zero the camera
         self.camera = [0, 0]
 
