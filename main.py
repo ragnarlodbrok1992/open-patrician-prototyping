@@ -1,4 +1,5 @@
 import pygame
+from math import sin, cos
 
 # Engine variables
 RES_HEIGHT = 800
@@ -49,8 +50,9 @@ def create_grid(height: int, width: int) -> list:
     return grid_output
 
 # Prototyping functions - rotating grid
-def rotate_grid(angle_in_rads: float) -> None:
-    pass
+def rotate_grid(angle_in_rads: float, grid: list) -> None:
+    ROTATION_MATRIX = [[cos(angle_in_rads), -sin(angle_in_rads)], [sin(angle_in_rads), cos(angle_in_rads)]]
+    print(ROTATION_MATRIX)
 
 # Prototyping functions - tilting camera
 def tilt_camera(angle_in_rads: float) -> None:
@@ -68,6 +70,7 @@ class Engine():
         self.camera = [0, 0]
         self.grid = create_grid(GRID_COLUMNS, GRID_ROWS)
         self.left_mouse_button_held = False
+        self.radians = 0.0
 
         # Debug
         # Tile(0, 0)
@@ -108,13 +111,13 @@ class Engine():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                         self.game_loop = False
+                    elif event.key == pygame.K_q:
+                        self.radians -= 0.1
+                        rotate_grid(self.radians, self.grid)
+                    elif event.key == pygame.K_e:
+                        self.radians += 0.1
+                        rotate_grid(self.radians, self.grid)
                         """
-                    elif event.key == pygame.K_a:
-                        # print("Pressed a!")
-                        self.camera[0] -= 10
-                    elif event.key == pygame.K_d:
-                        # print("Pressed d!")
-                        self.camera[0] += 10
                     elif event.key == pygame.K_w:
                         # print("Pressed w!")
                         self.camera[1] -= 10
