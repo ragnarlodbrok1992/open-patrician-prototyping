@@ -67,7 +67,17 @@ def create_grid(height: int, width: int) -> list:
 # Prototyping functions - rotating grid
 def rotate_grid(angle_in_rads: float, grid: list) -> None:
     ROTATION_MATRIX = [[cos(angle_in_rads), -sin(angle_in_rads)], [sin(angle_in_rads), cos(angle_in_rads)]]
-    print(ROTATION_MATRIX)
+    for tile in grid:
+        tile.nw.x = ROTATION_MATRIX[0][0] * tile.nw.x + ROTATION_MATRIX[1][0] * tile.nw.y
+        tile.nw.y = ROTATION_MATRIX[1][1] * tile.nw.y + ROTATION_MATRIX[0][1] * tile.nw.x
+        tile.ne.x = ROTATION_MATRIX[0][0] * tile.ne.x + ROTATION_MATRIX[1][0] * tile.ne.y
+        tile.ne.y = ROTATION_MATRIX[1][1] * tile.ne.y + ROTATION_MATRIX[0][1] * tile.ne.x
+        tile.se.x = ROTATION_MATRIX[0][0] * tile.se.x + ROTATION_MATRIX[1][0] * tile.se.y
+        tile.se.y = ROTATION_MATRIX[1][1] * tile.se.y + ROTATION_MATRIX[0][1] * tile.se.x
+        tile.sw.x = ROTATION_MATRIX[0][0] * tile.sw.x + ROTATION_MATRIX[1][0] * tile.sw.y
+        tile.sw.y = ROTATION_MATRIX[1][1] * tile.sw.y + ROTATION_MATRIX[0][1] * tile.sw.x
+
+    # print(ROTATION_MATRIX)
 
 # Prototyping functions - tilting camera
 def tilt_camera(angle_in_rads: float) -> None:
@@ -124,13 +134,13 @@ class Engine():
                 if event.type == pygame.QUIT:
                     self.game_loop = False
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
+                    if event.key == pygame.K_ESCAPE:
                         self.game_loop = False
                     elif event.key == pygame.K_q:
-                        self.radians -= 0.1
+                        self.radians -= 0.01
                         rotate_grid(self.radians, self.grid)
                     elif event.key == pygame.K_e:
-                        self.radians += 0.1
+                        self.radians += 0.01
                         rotate_grid(self.radians, self.grid)
                         """
                     elif event.key == pygame.K_w:
