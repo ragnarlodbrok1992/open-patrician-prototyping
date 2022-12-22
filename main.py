@@ -65,9 +65,20 @@ def create_grid(height: int, width: int) -> list:
     return grid_output
 
 # Prototyping functions - rotating grid
-def rotate_grid(angle_in_rads: float, grid: list) -> None:
+def rotate_grid(angle_in_rads: float, grid: list, camera: list) -> None:
     ROTATION_MATRIX = [[cos(angle_in_rads), -sin(angle_in_rads)], [sin(angle_in_rads), cos(angle_in_rads)]]
     for tile in grid:
+        # Substract camera
+        tile.nw.x -= camera[0]
+        tile.ne.x -= camera[0]
+        tile.sw.x -= camera[0]
+        tile.se.x -= camera[0]
+        tile.nw.y -= camera[1]
+        tile.ne.y -= camera[1]
+        tile.sw.y -= camera[1]
+        tile.se.y -= camera[1]
+
+        # Rotate grid
         tile.nw.x = ROTATION_MATRIX[0][0] * tile.nw.x + ROTATION_MATRIX[1][0] * tile.nw.y
         tile.nw.y = ROTATION_MATRIX[1][1] * tile.nw.y + ROTATION_MATRIX[0][1] * tile.nw.x
         tile.ne.x = ROTATION_MATRIX[0][0] * tile.ne.x + ROTATION_MATRIX[1][0] * tile.ne.y
@@ -77,7 +88,18 @@ def rotate_grid(angle_in_rads: float, grid: list) -> None:
         tile.sw.x = ROTATION_MATRIX[0][0] * tile.sw.x + ROTATION_MATRIX[1][0] * tile.sw.y
         tile.sw.y = ROTATION_MATRIX[1][1] * tile.sw.y + ROTATION_MATRIX[0][1] * tile.sw.x
 
-    # print(ROTATION_MATRIX)
+        # Add camera
+        tile.nw.x += camera[0]
+        tile.ne.x += camera[0]
+        tile.sw.x += camera[0]
+        tile.se.x += camera[0]
+        tile.nw.y += camera[1]
+        tile.ne.y += camera[1]
+        tile.sw.y += camera[1]
+        tile.se.y += camera[1]
+
+    print(ROTATION_MATRIX)
+    print(camera)
 
 # Prototyping functions - tilting camera
 def tilt_camera(angle_in_rads: float) -> None:
@@ -125,7 +147,7 @@ class Engine():
             else:
                 # pygame.draw.rect(self.screen, RED, tile.rect)
                 pygame.draw.lines(self.screen, RED, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
-        # Zero the camera
+        # Zero the camera TODO BUG: here we zero the camera which we shouldn't do
         self.camera = [0, 0]
 
     def main_game_loop(self):
@@ -138,10 +160,10 @@ class Engine():
                         self.game_loop = False
                     elif event.key == pygame.K_q:
                         self.radians -= 0.01
-                        rotate_grid(self.radians, self.grid)
+                        rotate_grid(self.radians, self.grid, self.camera)
                     elif event.key == pygame.K_e:
                         self.radians += 0.01
-                        rotate_grid(self.radians, self.grid)
+                        rotate_grid(self.radians, self.grid, self.camera)
                         """
                     elif event.key == pygame.K_w:
                         # print("Pressed w!")
