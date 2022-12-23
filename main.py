@@ -41,20 +41,6 @@ class Tile:
         self.sw = Point(pos_x + size, pos_y)
         self.se = Point(pos_x + size, pos_y + size)
 
-        # DEBUG
-        # self.nw = [pos_x, pos_y]
-        # self.ne = [pos_x, pos_y + size]
-        # self.sw = [pos_x + size, pos_y]
-        # self.se = [pos_x + size, pos_y + size]
-        # self.rect = pygame.Rect(self.nw, (size, size))
-
-        # DEBUG
-        # print(self.nw)
-        # print(self.ne)
-        # print(self.sw)
-        # print(self.se)
-        # print(self.rect)
-
 
 # Creating test grid
 def create_grid(height: int, width: int) -> list:
@@ -119,9 +105,15 @@ class Engine():
         self.left_mouse_button_held = False
         self.radians = 0.0
 
-        # Debug
-        # Tile(0, 0)
-        # print(self.grid)
+        # Render variables
+        self.render_grid = self.grid
+        self.render_check = False
+
+        # DEBUG
+        print("Grid")
+        print(id(self.grid))
+        print("Render grid")
+        print(id(self.render_grid))
 
     def run(self):
         self.main_game_loop()
@@ -142,10 +134,8 @@ class Engine():
             tile.sw.y += self.camera[1]
             tile.se.y += self.camera[1]
             if index % 2 == 0:
-                # pygame.draw.rect(self.screen, GREEN, tile.rect)
                 pygame.draw.lines(self.screen, GREEN, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
             else:
-                # pygame.draw.rect(self.screen, RED, tile.rect)
                 pygame.draw.lines(self.screen, RED, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
         # Zero the camera TODO BUG: here we zero the camera which we shouldn't do
         self.camera = [0, 0]
@@ -160,10 +150,12 @@ class Engine():
                         self.game_loop = False
                     elif event.key == pygame.K_q:
                         self.radians -= 0.01
-                        rotate_grid(self.radians, self.grid, self.camera)
+                        self.render_check = True
+                        # rotate_grid(self.radians, self.grid, self.camera)
                     elif event.key == pygame.K_e:
                         self.radians += 0.01
-                        rotate_grid(self.radians, self.grid, self.camera)
+                        self.render_check = True
+                        # rotate_grid(self.radians, self.grid, self.camera)
                         """
                     elif event.key == pygame.K_w:
                         # print("Pressed w!")
