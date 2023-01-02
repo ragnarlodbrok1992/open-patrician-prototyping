@@ -1,4 +1,5 @@
 import pygame
+import copy
 from math import sin, cos
 
 # Engine variables
@@ -51,7 +52,8 @@ def create_grid(height: int, width: int) -> list:
     return grid_output
 
 # Prototyping functions - rotating grid
-def rotate_grid(angle_in_rads: float, grid: list, camera: list) -> None:
+# TODO ragnar: create new rotate grid and return it
+def rotate_grid(angle_in_rads: float, grid: list, camera: list) -> list:
     ROTATION_MATRIX = [[cos(angle_in_rads), -sin(angle_in_rads)], [sin(angle_in_rads), cos(angle_in_rads)]]
     for tile in grid:
         # Substract camera
@@ -84,8 +86,7 @@ def rotate_grid(angle_in_rads: float, grid: list, camera: list) -> None:
         tile.sw.y += camera[1]
         tile.se.y += camera[1]
 
-    print(ROTATION_MATRIX)
-    print(camera)
+    return grid
 
 # Prototyping functions - tilting camera
 def tilt_camera(angle_in_rads: float) -> None:
@@ -106,24 +107,16 @@ class Engine():
         self.radians = 0.0
 
         # Render variables
-        self.render_grid = self.grid
-        self.render_check = False
-
-        # DEBUG
-        print("Grid")
-        print(id(self.grid))
-        print("Render grid")
-        print(id(self.render_grid))
+        self.render_check = True
 
     def run(self):
         self.main_game_loop()
 
-    def render_grid(self):
+    def render_grid(self, grid: list) -> None:
         # Render grid
-        for index, tile in enumerate(self.grid):
-            # Change rects positions
-            # tile.rect.move_ip(self.camera[0], self.camera[1])
-
+        grid_to_render = copy.deepcopy(grid)
+        grid_to_render = rotate_grid(self.radians, grid_to_render, self.camera)
+        for index, tile in enumerate(grid_to_render):
             tile.nw.x += self.camera[0]
             tile.ne.x += self.camera[0]
             tile.sw.x += self.camera[0]
@@ -137,8 +130,6 @@ class Engine():
                 pygame.draw.lines(self.screen, GREEN, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
             else:
                 pygame.draw.lines(self.screen, RED, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
-        # Zero the camera TODO BUG: here we zero the camera which we shouldn't do
-        self.camera = [0, 0]
 
     def main_game_loop(self):
         while self.game_loop:
@@ -151,11 +142,9 @@ class Engine():
                     elif event.key == pygame.K_q:
                         self.radians -= 0.01
                         self.render_check = True
-                        # rotate_grid(self.radians, self.grid, self.camera)
                     elif event.key == pygame.K_e:
                         self.radians += 0.01
                         self.render_check = True
-                        # rotate_grid(self.radians, self.grid, self.camera)
                         """
                     elif event.key == pygame.K_w:
                         # print("Pressed w!")
@@ -167,27 +156,24 @@ class Engine():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pressed_keys = pygame.mouse.get_pressed()
                     self.left_mouse_button_held = mouse_pressed_keys[0]
-                    # mouse_pos_rel = pygame.mouse.get_rel()
-                    print(mouse_pressed_keys)
-                    # print(mouse_pos_rel)
+                    self.render_check = True
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.left_mouse_button_held = False
             # Check if mouse button is held
             if self.left_mouse_button_held:
-                # print("Holding left mouse button!")
-                # print(pygame.mouse.get_rel())
                 mouse_rel = pygame.mouse.get_rel()
                 self.camera[0] += mouse_rel[0]
                 self.camera[1] += mouse_rel[1]
+                self.render_check = True
             else:
                 pygame.mouse.get_rel()
 
             # Render frame here
-
-            self.screen.fill(BLACK)
-
             # Render grid
-            self.render_grid()
+            if self.render_check:
+                self.screen.fill(BLACK)
+                self.render_grid(self.grid)
+                self.render_check = False
 
             # Do at the end of frame
             pygame.display.update()
