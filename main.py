@@ -54,7 +54,11 @@ def create_grid(height: int, width: int) -> list:
 # Prototyping functions - rotating grid
 # TODO ragnar: create new rotate grid and return it
 def rotate_grid(angle_in_rads: float, grid: list, camera: list) -> list:
+    # TODO FIXME: There is a bug in rotation
     ROTATION_MATRIX = [[cos(angle_in_rads), -sin(angle_in_rads)], [sin(angle_in_rads), cos(angle_in_rads)]]
+    cos_rad = cos(angle_in_rads)
+    minus_sin_rad = -1 * sin(angle_in_rads)
+    sin_rad = sin(angle_in_rads)
     for tile in grid:
         # Substract camera
         tile.nw.x -= camera[0]
@@ -121,7 +125,7 @@ class Engine():
             tile.ne.x += self.camera[0]
             tile.sw.x += self.camera[0]
             tile.se.x += self.camera[0]
-
+            
             tile.nw.y += self.camera[1]
             tile.ne.y += self.camera[1]
             tile.sw.y += self.camera[1]
@@ -132,6 +136,8 @@ class Engine():
                 pygame.draw.lines(self.screen, RED, True, [tile.nw.get_pair(), tile.ne.get_pair(), tile.se.get_pair(), tile.sw.get_pair()]) 
 
     def main_game_loop(self):
+        space_pressed = False
+
         while self.game_loop:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -153,6 +159,11 @@ class Engine():
                         # print("Pressed s!")
                         self.camera[1] += 10
                         """
+                    elif event.key == pygame.K_SPACE:
+                        space_pressed = True
+                elif event.type == pygame.KEYUP:
+                    if event.key == pygame.K_SPACE:
+                        space_pressed = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pressed_keys = pygame.mouse.get_pressed()
                     self.left_mouse_button_held = mouse_pressed_keys[0]
@@ -167,6 +178,11 @@ class Engine():
                 self.render_check = True
             else:
                 pygame.mouse.get_rel()
+
+            # Simulation code goes here
+            if space_pressed:
+                self.radians += 0.01
+                self.render_check = True
 
             # Render frame here
             # Render grid
