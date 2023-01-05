@@ -18,6 +18,7 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+
 # <------y------->
 # ^
 # -
@@ -55,11 +56,18 @@ def create_grid(height: int, width: int) -> list:
 # TODO ragnar: create new rotate grid and return it
 def rotate_grid(angle_in_rads: float, grid: list, camera: list) -> list:
     # TODO FIXME: There is a bug in rotation
-    ROTATION_MATRIX = [[cos(angle_in_rads), -sin(angle_in_rads)], [sin(angle_in_rads), cos(angle_in_rads)]]
-    cos_rad = cos(angle_in_rads)
-    minus_sin_rad = -1 * sin(angle_in_rads)
-    sin_rad = sin(angle_in_rads)
+    ROTATION_MATRIX = [[cos(angle_in_rads), sin(angle_in_rads)], [sin(angle_in_rads), cos(angle_in_rads)]]
     for tile in grid:
+        # Copy the old values
+        old_nw_x = copy.deepcopy(tile.nw.x)
+        old_nw_y = copy.deepcopy(tile.nw.y)
+        old_ne_x = copy.deepcopy(tile.ne.x)
+        old_ne_y = copy.deepcopy(tile.ne.y)
+        old_se_x = copy.deepcopy(tile.se.x)
+        old_se_y = copy.deepcopy(tile.se.y)
+        old_sw_x = copy.deepcopy(tile.sw.x)
+        old_sw_y = copy.deepcopy(tile.sw.y)
+
         # Substract camera
         tile.nw.x -= camera[0]
         tile.ne.x -= camera[0]
@@ -71,14 +79,17 @@ def rotate_grid(angle_in_rads: float, grid: list, camera: list) -> list:
         tile.se.y -= camera[1]
 
         # Rotate grid
-        tile.nw.x = ROTATION_MATRIX[0][0] * tile.nw.x + ROTATION_MATRIX[1][0] * tile.nw.y
-        tile.nw.y = ROTATION_MATRIX[1][1] * tile.nw.y + ROTATION_MATRIX[0][1] * tile.nw.x
-        tile.ne.x = ROTATION_MATRIX[0][0] * tile.ne.x + ROTATION_MATRIX[1][0] * tile.ne.y
-        tile.ne.y = ROTATION_MATRIX[1][1] * tile.ne.y + ROTATION_MATRIX[0][1] * tile.ne.x
-        tile.se.x = ROTATION_MATRIX[0][0] * tile.se.x + ROTATION_MATRIX[1][0] * tile.se.y
-        tile.se.y = ROTATION_MATRIX[1][1] * tile.se.y + ROTATION_MATRIX[0][1] * tile.se.x
-        tile.sw.x = ROTATION_MATRIX[0][0] * tile.sw.x + ROTATION_MATRIX[1][0] * tile.sw.y
-        tile.sw.y = ROTATION_MATRIX[1][1] * tile.sw.y + ROTATION_MATRIX[0][1] * tile.sw.x
+        tile.nw.x = ROTATION_MATRIX[0][0] * old_nw_x - ROTATION_MATRIX[1][0] * old_nw_y
+        tile.nw.y = ROTATION_MATRIX[1][1] * old_nw_y + ROTATION_MATRIX[0][1] * old_nw_x
+
+        tile.ne.x = ROTATION_MATRIX[0][0] * old_ne_x - ROTATION_MATRIX[1][0] * old_ne_y
+        tile.ne.y = ROTATION_MATRIX[1][1] * old_ne_y + ROTATION_MATRIX[0][1] * old_ne_x
+
+        tile.se.x = ROTATION_MATRIX[0][0] * old_se_x - ROTATION_MATRIX[1][0] * old_se_y
+        tile.se.y = ROTATION_MATRIX[1][1] * old_se_y + ROTATION_MATRIX[0][1] * old_se_x
+
+        tile.sw.x = ROTATION_MATRIX[0][0] * old_sw_x - ROTATION_MATRIX[1][0] * old_sw_y
+        tile.sw.y = ROTATION_MATRIX[1][1] * old_sw_y + ROTATION_MATRIX[0][1] * old_sw_x
 
         # Add camera
         tile.nw.x += camera[0]
@@ -103,6 +114,10 @@ class Engine():
         pygame.display.set_caption("Open Patrician Prototyping engine")
         self.screen = pygame.display.set_mode((res_height, res_width))
         self.game_loop = True
+
+        # Some fonts
+        pygame.font.init()
+        self.font = pygame.font.SysFont("Arial", 12)
 
         # Prototyping variables
         self.camera = [0, 0]
@@ -137,6 +152,7 @@ class Engine():
 
     def main_game_loop(self):
         space_pressed = False
+        shift_pressed = False
 
         while self.game_loop:
             for event in pygame.event.get():
@@ -161,9 +177,13 @@ class Engine():
                         """
                     elif event.key == pygame.K_SPACE:
                         space_pressed = True
+                    elif event.key == pygame.K_LSHIFT:
+                        shift_pressed = True
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_SPACE:
                         space_pressed = False
+                    elif event.key == pygame.K_LSHIFT:
+                        shift_pressed = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pressed_keys = pygame.mouse.get_pressed()
                     self.left_mouse_button_held = mouse_pressed_keys[0]
@@ -182,6 +202,10 @@ class Engine():
             # Simulation code goes here
             if space_pressed:
                 self.radians += 0.01
+                self.render_check = True
+
+            if shift_pressed:
+                self.radians -= 0.01
                 self.render_check = True
 
             # Render frame here
